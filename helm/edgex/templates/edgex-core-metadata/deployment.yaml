@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.edgex.core.metadata.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.metadata.name) | indent 4 }}
+spec:
+  replicas: {{ .Values.edgex.core.metadata.replicas }}
+  strategy:
+    type: {{ .Values.edgex.core.metadata.deployment.strategy }}
+  selector:
+    matchLabels:
+      {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.metadata.name) | indent 6 }}
+  template:
+    metadata:
+      name: {{ .Values.edgex.core.metadata.name }}
+      labels:
+        {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.metadata.name) | indent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.edgex.core.metadata.name }}
+        image: "{{ .Values.edgex.core.metadata.image.name }}:{{ .Values.edgex.core.metadata.image.tag }}"
+        command:
+        - "/core-metadata"
+        - "--confdir=/config"
+        env:
+        - name: EDGEX_SECURITY_SECRET_STORE
+          value: "false"
+        ports:
+        - containerPort: {{ .Values.edgex.core.metadata.port }}
+        readinessProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: {{ .Values.edgex.core.metadata.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: {{ .Values.edgex.core.metadata.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: {{ .Values.edgex.core.metadata.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          limits:
+            cpu: {{ .Values.edgex.core.metadata.resources.limits.cpu }}
+            memory: {{ .Values.edgex.core.metadata.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.edgex.core.metadata.resources.requests.cpu }}
+            memory: {{ .Values.edgex.core.metadata.resources.requests.memory }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+      volumes:
+      - name: config-volume
+        secret:
+          secretName: {{ .Values.edgex.core.metadata.name }}

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/app.root: /{{ .Values.edgex.core.data.name }}
+  name: {{ .Values.edgex.core.data.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.data.name) | indent 4 }}
+spec:
+  rules:
+  - host: data.edgex.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ .Values.edgex.core.data.name }}
+          servicePort: {{ .Values.edgex.core.data.port }}

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.edgex.redis.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 4 }}
+
+
+spec:
+  replicas: {{ .Values.edgex.redis.replicas }}
+  strategy:
+    type: {{ .Values.edgex.redis.deployment.strategy }}
+  selector:
+    matchLabels:
+      {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 6 }}
+
+
+  template:
+    metadata:
+      name: {{ .Values.edgex.redis.name }}
+      labels:
+        {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 8 }}
+
+    spec:
+      containers:
+      - name: {{ .Values.edgex.redis.name }}
+        image: "{{ .Values.edgex.redis.image.name}}:{{ .Values.edgex.redis.image.tag}}"
+        ports:
+        - containerPort: {{ .Values.edgex.redis.port }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.redis.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.redis.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.redis.port }}
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
+        volumeMounts:
+        - name: redis-data
+          mountPath: /var/lib/redis
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.edgex.redis.name }}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.edgex.redis.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 4 }}
+
+
+spec:
+  selector:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 4 }}
+
+
+  ports:
+  - port: {{ .Values.edgex.redis.port }}
+    name: "port-{{ .Values.edgex.redis.port }}"
