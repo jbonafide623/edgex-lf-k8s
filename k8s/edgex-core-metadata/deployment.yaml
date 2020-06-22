@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edgex-core-metadata
+  labels:
+    app.kubernetes.io/app: edgex-core-metadata
+    app.kubernetes.io/instance: edgex
+    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: edgex-foundry
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: edgex-1.2.0
+
+spec:
+  replicas: 1
+  strategy:
+    type:
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: edgex-core-metadata
+      app.kubernetes.io/instance: edgex
+      app.kubernetes.io/version: 1.2.0
+      app.kubernetes.io/component: api
+      app.kubernetes.io/part-of: edgex-foundry
+      app.kubernetes.io/managed-by: Helm
+      helm.sh/chart: edgex-1.2.0
+
+  template:
+    metadata:
+      name: edgex-core-metadata
+      labels:
+        app.kubernetes.io/app: edgex-core-metadata
+        app.kubernetes.io/instance: edgex
+        app.kubernetes.io/version: 1.2.0
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: edgex-foundry
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: edgex-1.2.0
+
+    spec:
+      containers:
+      - name: edgex-core-metadata
+        image: "edgexfoundry/docker-core-metadata-go:1.2.0"
+        command:
+        - "/core-metadata"
+        - "--confdir=/config"
+        env:
+        - name: EDGEX_SECURITY_SECRET_STORE
+          value: "false"
+        ports:
+        - containerPort: 48081
+        readinessProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: 48081
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: 48081
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /api/v1/ping
+            port: 48081
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          limits:
+            cpu: 1
+            memory: 512Mi
+          requests:
+            cpu: 0.5
+            memory: 512Mi
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+      volumes:
+      - name: config-volume
+        secret:
+          secretName: edgex-core-metadata
