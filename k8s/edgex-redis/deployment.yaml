@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edgex-redis
+  labels:
+    app.kubernetes.io/app: edgex-redis
+    app.kubernetes.io/instance: edgex
+    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: edgex-foundry
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: edgex-1.2.0
+
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: edgex-redis
+      app.kubernetes.io/instance: edgex
+      app.kubernetes.io/version: 1.2.0
+      app.kubernetes.io/component: api
+      app.kubernetes.io/part-of: edgex-foundry
+      app.kubernetes.io/managed-by: Helm
+      helm.sh/chart: edgex-1.2.0
+
+  template:
+    metadata:
+      name: edgex-redis
+      labels:
+        app.kubernetes.io/app: edgex-redis
+        app.kubernetes.io/instance: edgex
+        app.kubernetes.io/version: 1.2.0
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: edgex-foundry
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: edgex-1.2.0
+
+    spec:
+      containers:
+      - name: edgex-redis
+        image: "redis:latest"
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          tcpSocket:
+            port: 6379
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
+        volumeMounts:
+        - name: redis-data
+          mountPath: /var/lib/redis
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: edgex-redis

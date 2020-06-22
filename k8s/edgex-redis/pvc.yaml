@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: edgex-redis
+  labels:
+    app.kubernetes.io/app: edgex-redis
+    app.kubernetes.io/instance: edgex
+    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: edgex-foundry
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: edgex-1.2.0
+
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: edgex-redis
+      app.kubernetes.io/instance: edgex
+      app.kubernetes.io/version: 1.2.0
+      app.kubernetes.io/component: api
+      app.kubernetes.io/part-of: edgex-foundry
+      app.kubernetes.io/managed-by: Helm
+      helm.sh/chart: edgex-1.2.0
+
+  storageClassName: hostpath
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
