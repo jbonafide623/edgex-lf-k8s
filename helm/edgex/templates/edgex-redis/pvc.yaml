@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.edgex.redis.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 4 }}
+
+
+spec:
+  selector:
+    matchLabels:
+      {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.redis.name) | indent 6 }}
+
+
+  storageClassName: {{ .Values.edgex.redis.storeClassName }}
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi

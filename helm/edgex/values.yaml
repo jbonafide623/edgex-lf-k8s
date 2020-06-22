@@ -1,0 +1,98 @@
+edgex:
+  core:
+    command:
+      name: edgex-core-command
+      deployment:
+        strategy: Recreate
+      image:
+        name: edgexfoundry/docker-core-command-go
+        tag: 1.2.0
+      port: 48082
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 512Mi
+        requests:
+          cpu: 0.5
+          memory: 256Mi
+
+    data:
+      name: edgex-core-data
+      deployment:
+        strategy: Recreate
+      image:
+        name: edgexfoundry/docker-core-data-go
+        tag: 1.2.0
+      port: 48080
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 512Mi
+        requests:
+          cpu: 0.5
+          memory: 256Mi
+
+    metadata:
+      name: edgex-core-metadata
+      deployment:
+        strategy: Recreate
+      image:
+        name: edgexfoundry/docker-core-metadata-go
+        tag: 1.2.0
+      port: 48081
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 512Mi
+        requests:
+          cpu: 0.5
+          memory: 256Mi
+
+  device:
+    service:
+      name: edgex-device-modbus-go
+      deployment:
+        strategy: Recreate
+      image:
+        name: edgexfoundry/docker-device-modbus-go
+        tag: 1.2.0
+      port: 49991
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 512Mi
+        requests:
+          cpu: 0.5
+          memory: 256Mi
+
+    simulator:
+      name: edgex-device-modbus-simulator
+      deployment:
+        strategy: Recreate
+      image:
+        name: jbonafide623/device-modbus-simulator
+        tag: latest
+      port: 5020
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 512Mi
+        requests:
+          cpu: 0.5
+          memory: 256Mi
+
+  redis:
+    name: edgex-redis
+    deployment:
+      strategy: Recreate
+    image:
+      name: redis
+      tag: latest
+    port: 6379
+    replicas: 1
+    storageClassName: hostpath

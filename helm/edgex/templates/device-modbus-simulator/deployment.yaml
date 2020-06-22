@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.edgex.device.simulator.name }}
+  labels:
+    {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.device.simulator.name) | indent 4 }}
+spec:
+  replicas: {{ .Values.edgex.device.simulator.replicas }}
+  strategy:
+    type: {{ .Values.edgex.device.simulator.deployment.strategy }}
+  selector:
+    matchLabels:
+      {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.device.simulator.name) | indent 6 }}
+  template:
+    metadata:
+      name: {{ .Values.edgex.device.simulator.name }}
+      labels:
+        {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.device.simulator.name) | indent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.edgex.device.simulator.name }}
+        image: "{{ .Values.edgex.device.simulator.image.name }}:{{ .Values.edgex.device.simulator.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.edgex.device.simulator.port }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.simulator.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.simulator.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.simulator.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          limits:
+            cpu: {{ .Values.edgex.device.simulator.resources.limits.cpu }}
+            memory: {{ .Values.edgex.device.simulator.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.edgex.device.simulator.resources.requests.cpu }}
+            memory: {{ .Values.edgex.device.simulator.resources.requests.memory }}
+      - name: {{ .Values.edgex.device.service.name }}
+        image: "{{ .Values.edgex.device.service.image.name }}:{{ .Values.edgex.device.service.image.tag }}"
+        command:
+        - "/device-modbus"
+        - "--confdir=/config"
+        ports:
+          - containerPort: {{ .Values.edgex.device.service.port }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.service.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.service.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.edgex.device.service.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          limits:
+            cpu: {{ .Values.edgex.device.service.resources.limits.cpu }}
+            memory: {{ .Values.edgex.device.service.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.edgex.device.service.resources.requests.cpu }}
+            memory: {{ .Values.edgex.device.service.resources.requests.memory }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+        - name: profiles-volume
+          mountPath: /profiles
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Values.edgex.device.service.name }}-config
+      - name: profiles-volume
+        configMap:
+          name: {{ .Values.edgex.device.service.name }}-profiles
