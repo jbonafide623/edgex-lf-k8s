@@ -11,4 +11,4 @@ spec:
   ports:
   - port: {{ .Values.edgex.core.data.port }}
     name: "port-{{ .Values.edgex.core.data.port}}"
-    port: 30800
+    nodePort: 30800
