@@ -5,8 +5,10 @@ metadata:
   labels:
     {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.metadata.name) | indent 4 }}
 spec:
+  type: NodePort
   selector:
     {{- include "edgex.labels" (dict "ctx" . "AppName" $.Values.edgex.core.metadata.name) | indent 4 }}
   ports:
   - port: {{ .Values.edgex.core.metadata.port }}
     name: "port-{{ .Values.edgex.core.metadata.port}}"
+    nodePort: 30801
