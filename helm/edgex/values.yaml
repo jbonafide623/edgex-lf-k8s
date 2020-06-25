@@ -6,7 +6,7 @@ edgex:
         strategy: Recreate
       image:
         name: edgexfoundry/docker-core-command-go
-        tag: 1.2.0
+        tag: 1.2.1
       port: 48082
       replicas: 1
       resources:
@@ -23,7 +23,7 @@ edgex:
         strategy: Recreate
       image:
         name: edgexfoundry/docker-core-data-go
-        tag: 1.2.0
+        tag: 1.2.1
       port: 48080
       replicas: 1
       resources:
@@ -40,7 +40,7 @@ edgex:
         strategy: Recreate
       image:
         name: edgexfoundry/docker-core-metadata-go
-        tag: 1.2.0
+        tag: 1.2.1
       port: 48081
       replicas: 1
       resources:
@@ -58,7 +58,7 @@ edgex:
         strategy: Recreate
       image:
         name: edgexfoundry/docker-device-modbus-go
-        tag: 1.2.0
+        tag: 1.2.1
       port: 49991
       replicas: 1
       resources:

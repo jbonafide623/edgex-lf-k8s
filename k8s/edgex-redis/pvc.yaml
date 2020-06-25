@@ -5,22 +5,22 @@ metadata:
   labels:
     app.kubernetes.io/app: edgex-redis
     app.kubernetes.io/instance: edgex
-    app.kubernetes.io/version: 1.2.0
+    app.kubernetes.io/version: 1.2.1
     app.kubernetes.io/component: api
     app.kubernetes.io/part-of: edgex-foundry
     app.kubernetes.io/managed-by: Helm
-    helm.sh/chart: edgex-1.2.0
+    helm.sh/chart: edgex-1.2.1
 
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/app: edgex-redis
       app.kubernetes.io/instance: edgex
-      app.kubernetes.io/version: 1.2.0
+      app.kubernetes.io/version: 1.2.1
       app.kubernetes.io/component: api
       app.kubernetes.io/part-of: edgex-foundry
       app.kubernetes.io/managed-by: Helm
-      helm.sh/chart: edgex-1.2.0
+      helm.sh/chart: edgex-1.2.1
 
   storageClassName: hostpath
   accessModes:
